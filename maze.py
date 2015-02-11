@@ -5,8 +5,10 @@
 
 #Build and solve perfect mazes
 
+#Dependencies
 import random
 
+#Stack Datatype
 class myStack():
 
     def __init__(self,initial=[]):
@@ -31,10 +33,12 @@ class myStack():
             return False
 
     def size(self):
+        #The size of the stack
         return len(self.stack)
-        
-class cell():
 
+#A single cell of the nxn grid        
+class cell():
+    #Setting up required properties of a cell
     def __init__(self,x,y,isStart = False,isEnd = False,cType='F',order=15,visited=False):
         self.x = x
         self.y = y
@@ -48,7 +52,7 @@ class cell():
         else:
             self.border = False
         
-                
+#nxn Perfect Maze               
 class PerfectMaze():
 
     def __init__(self,n):
