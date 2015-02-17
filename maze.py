@@ -91,14 +91,15 @@ class PerfectMaze():
             px = p[0]
             py = p[1]
             current = self.maze[x][y]
+            self.maze[x][y].visited = True
             current.visited = True
             self.maze[x][y] = current
             cNext = self.maze[x+px][y+py]
             
-            if cNext != None:
+            if cNext != None and cNext.visited == False:
                 if cNext.border == False and cNext.visited == False:
                     current = cNext
-                    current.visited = True                
+                    current.visited = True
                     if (px,py) == (0,1):
                         self.north[x][y],self.south[x][y+py] = False,False
                     elif (px,py) == (1,0):
@@ -125,26 +126,30 @@ class PerfectMaze():
 
         point = [1,1]
         steps = 1
-        progress = checkDone(self)
-        while progress == False:
+        prog = checkDone(self)
+        while prog == False:
                 skip = False
                 print("Currently at: ",point)
                 pick = random.randint(0,3)
                 print("Computer chose side ",pick+1)
                 choices = [(0,1),(1,0),(0,-1),(-1,0)]
-                if (point[0]+choices[pick][0]) > 0 and (point[1] + choices[pick][1]) > 0 and (point[0]+choices[pick][0]) <= self.n and  (point[1] + choices[pick][1]) <= self.n:
+                if (point[0]+choices[pick][0]) > 0 and (point[1] + choices[pick][1]) > 0 and (point[0]+choices[pick][0]) < self.n+1 and  (point[1] + choices[pick][1]) < self.n+1:
                     print("valid next cell")
+                    lastCell = current
                     nextCell = [point[0]+choices[pick][0],point[1] + choices[pick][1]]
                 else:
                     skip = True
                 if not(skip):
-                    steps += 1
-                    print("Walking from ", point , " to ", nextCell)
-                    walk(self,point[0],point[1],choices[pick])
-                    point[0] += choices[pick][0]
-                    point [1] += choices[pick][1]
-                progress = checkDone(self)               
-                print("The maze is done: ", progress)
+                    if (self.maze[point[0] + choices[pick][0]][point[1]+choices[pick][1]].visited == False):
+                        steps += 1
+                        print("Walking from ", point , " to ", nextCell)
+                        walk(self,point[0],point[1],choices[pick])
+                        point[0] += choices[pick][0]
+                        point [1] += choices[pick][1]
+                    else:
+                        
+                prog = checkDone(self)               
+                print("The maze is done: ", prog)
 
         
         def pickStarts(self):
