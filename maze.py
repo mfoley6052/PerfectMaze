@@ -65,6 +65,15 @@ class PerfectMaze():
         self.n = n
 
     def display(self):
+        M = []
+        for x in range(self.n+2):
+            N = []
+            for y in range(self.n+2):
+                N.append(((x,y),self.maze[x][y].visited,self.maze[x][y].border))
+            M.append(N)
+            print (M[x])
+    
+    def displayWalls(self):
         for a in range(len(self.maze)):
             for i in [self.maze[a],self.north[a],self.east[a],self.south[a],self.west[a]]:
                 print(i)                                       
