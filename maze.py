@@ -88,46 +88,30 @@ class PerfectMaze():
             py = p[1]
             self.maze[x][y].visited = True
             
-            if self.maze[x+px][y+py]  != None and self.maze[x+px][y+py].visited == False:
-                if self.maze[x+px][y+py].border == False and self.maze[x+px][y+py].visited == False:
-                    self.maze[x+px][x+py].visited = True
-                    self.maze[x+px][y+py].
-                    if (px,py) == (0,1):
-                        self.north[x][y],self.south[x+px][y+py] = False,False
-                    elif (px,py) == (1,0):
-                        self.east[x][y],self.west[x+px][y+py] = False,False
-                    elif (px,py) == (0,-1):
-                        self.south[x][y],self.north[x+px][y+py] = False,False
-                    elif (px,py) == (-1,0):
-                        self.west[x][y],self.east[x+px][y+py] = False,False
-                    x += px
-                    y += py
-                else:
-                    self.maze[x+px][y+py].visited = True
-                    self.maze[x+px][y+py] = self.maze[x+px][y+py]
-                t=0
-                for a in range(len(self.maze)):
-                    for b in range(len(self.maze[a])):
-                        if self.maze[a][b] != None:
-                            if self.maze[a][b].visited == True:
-                                t += 1
-                if (t > progress):
-                    self.steps[0] += abs(t-progress)
-                    progress += t
-
+            if self.maze[x+px][y+py]  != None and self.maze[x+px][y+py].border == False and self.maze[x+px][y+py].visited == False:
+                self.maze[x+px][x+py].visited = True
+                self.steps[0] += 1
+                if (px,py) == (0,1):
+                    self.north[x][y],self.south[x+px][y+py] = False,False
+                elif (px,py) == (1,0):
+                    self.east[x][y],self.west[x+px][y+py] = False,False
+                elif (px,py) == (0,-1):
+                    self.south[x][y],self.north[x+px][y+py] = False,False
+                elif (px,py) == (-1,0):
+                    self.west[x][y],self.east[x+px][y+py] = False,False
+                    
         point = [1,1]
         steps = 1
         prog = False
         random.seed()
         while prog == False:
-                skip = False
-                print("Currently at: ",point)
+                skip = False                
                 pick = random.randint(0,3)
-                print("Computer chose side ",pick+1)
                 choices = [(0,1),(1,0),(0,-1),(-1,0)]
                 if (point[0]+choices[pick][0]) > 0 and (point[1] + choices[pick][1]) > 0 and (point[0]+choices[pick][0]) < self.n+1 and  (point[1] + choices[pick][1]) < self.n+1:
-                    print("valid next cell")
-                    lastCell = current
+#                    print("Currently at: ",point)
+#                    print("Computer chose side ",pick+1)
+#                    print("valid next cell")
                     nextCell = [point[0]+choices[pick][0],point[1] + choices[pick][1]]
                 else:
                     
@@ -141,7 +125,7 @@ class PerfectMaze():
                         point [1] += choices[pick][1]
                         
                 prog = checkDone(self)               
-                print("The maze is done: ", prog)
+                #print("The maze is done: ", prog)
 
         
         def pickStarts(self):
@@ -190,7 +174,7 @@ class PerfectMaze():
             for y in range(self.n+2):
                     self.maze[x][y] = cell(x,y)
                     self.north[x][y],self.east[x][y],self.south[x][y],self.west[x][y] = True,True,True,True
-                    if x == self.n or y ==self.n:
+                    if x == self.n+1 or y ==self.n+1:
                         self.maze[x][y].border = True
 
  
