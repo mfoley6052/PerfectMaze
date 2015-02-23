@@ -47,10 +47,6 @@ class cell():
         self.visited = visited
         self.isStart =isStart
         self.isEnd = isEnd
-        if (x == 1) or (y == 1):
-            self.border = True
-        else:
-            self.border = False
         
 #nxn Perfect Maze               
 class PerfectMaze():
@@ -63,93 +59,105 @@ class PerfectMaze():
         self.steps = [0,0]
         self.ends = [None,None]
         self.n = n
+        self.stuck = False
 
     def display(self):
+        M = []
+        for x in range(self.n+2):
+            N = []
+            for y in range(self.n+2):
+                N.append(((x,y),self.maze[x][y].visited))
+            M.append(N)
+            print (M[x])
+    
+    def displayWalls(self):
         for a in range(len(self.maze)):
             for i in [self.maze[a],self.north[a],self.east[a],self.south[a],self.west[a]]:
-                print(i)
-    
-                
-    
-                                        
+                print(i)                                       
 
     def build(self):
         
         def checkDone(self):
-            done = False
-            s = 0
-            for x in range(1,self.n+1):
-                for y in range(1,self.n+1):
-                    if self.maze[x][y].visited == True:
-                        s += 1
-            if s == self.n**2:
-                done = True
-            return done
+            if self.steps[0]+1 == 2*self.n**2:
+                return True
+            else:
+                return False
 
-        def walk(self,x,y,p):
-            progress = self.steps[0]
+        def walk(self,x,y,p): #Thought: Do i need points, or can i just give the next cell?
             px = p[0]
             py = p[1]
-            current = self.maze[x][y]
-            self.maze[x][y].visited = True
-            current.visited = True
-            self.maze[x][y] = current
-            cNext = self.maze[x+px][y+py]
-            
-            if cNext != None and cNext.visited == False:
-                if cNext.border == False and cNext.visited == False:
-                    current = cNext
-                    current.visited = True
-                    if (px,py) == (0,1):
-                        self.north[x][y],self.south[x][y+py] = False,False
-                    elif (px,py) == (1,0):
-                        self.east[x][y],self.west[x+px][y] = False,False
-                    elif (px,py) == (0,-1):
-                        self.south[x][y],self.north[x][y+py] = False,False
-                    elif (px,py) == (-1,0):
-                        self.west[x][y],self.east[x+px][y] = False,False
-                    self.maze[x+px][y+py] = current
-                    x += px
-                    y += py
-                else:
-                    cNext.visited = True
-                    self.maze[x+px][y+py] = cNext
-                t=0
-                for a in range(len(self.maze)):
-                    for b in range(len(self.maze[a])):
-                        if self.maze[a][b] != None:
-                            if self.maze[a][b].visited == True:
-                                t += 1
-                if (t > progress):
-                    self.steps[0] += abs(t-progress)
-                    progress += t
+            print("(x,y): ",(x,y),"  increment: ",(px,py),"  next: ", (x+px,y+py))
+            if self.maze[x+px][y+py]  != None:
+                print ("Visited: ",self.maze[x+px][y+py].visited)
+                #if self.maze[x+px][y+py].border == False:# and self.maze[x+px][y+py].visited == False:
+                self.maze[x+px][y+py].visited = True
+                self.steps[0] += 1
+                if (px,py) == (0,1):
+                    self.north[x][y],self.south[x+px][y+py] = False,False
+                elif (px,py) == (1,0):
+                    self.east[x][y],self.west[x+px][y+py] = False,False
+                elif (px,py) == (0,-1):
+                    self.south[x][y],self.north[x+px][y+py] = False,False
+                elif (px,py) == (-1,0):
+                    self.west[x][y],self.east[x+px][y+py] = False,False
+                #else:
 
-        point = [1,1]
-        steps = 1
-        prog = checkDone(self)
-        while prog == False:
-                skip = False
-                print("Currently at: ",point)
+        def pickDirection(bad=None):
+            pick = random.randint(0,3)
+            dirs = {0,1,2,3}
+            if bad != None:
+                    dirs.remove(bad)
+            print("Dir pick: ",pick,"      Available Dirs: ", dirs, "     bad dir:  ",bad)
+            while pick not in dirs and dirs != {}:
                 pick = random.randint(0,3)
-                print("Computer chose side ",pick+1)
-                choices = [(0,1),(1,0),(0,-1),(-1,0)]
-                if (point[0]+choices[pick][0]) > 0 and (point[1] + choices[pick][1]) > 0 and (point[0]+choices[pick][0]) < self.n+1 and  (point[1] + choices[pick][1]) < self.n+1:
-                    print("valid next cell")
-                    lastCell = current
-                    nextCell = [point[0]+choices[pick][0],point[1] + choices[pick][1]]
+                
+            if dirs != {}:
+                 return pick
+            else:
+                return -1
+            
+        def moveInDirection(self,curr,direction):
+            choices = [(0,1),(1,0),(0,-1),(-1,0)]
+            if direction == -1:
+                self.stuck = True
+            nextCell = [curr[0] + choices[direction][0],curr[1] + choices[direction][1]]
+            print("next Cell: ",nextCell)
+           # if self.maze[choices[direction][0]][choices[direction][1]].visited == False:
+            if nextCell[0] > 0 and nextCell[0] < self.n+1:
+                print("Next x value is good: ",nextCell[0])
+                if nextCell[1] > 0 and nextCell[1] < self.n+1:
+                    print("Next y value is good: ",nextCell[1])
+                    walk(self,curr[0],curr[1],[choices[direction][0],choices[direction][1]])
+                    print("direction: ",direction)
+                    print("Walking from ", curr , " to ", nextCell)
+                    print("nextCell: ",nextCell)
+                    return nextCell
                 else:
-                    skip = True
-                if not(skip):
-                    if (self.maze[point[0] + choices[pick][0]][point[1]+choices[pick][1]].visited == False):
-                        steps += 1
-                        print("Walking from ", point , " to ", nextCell)
-                        walk(self,point[0],point[1],choices[pick])
-                        point[0] += choices[pick][0]
-                        point [1] += choices[pick][1]
-                    else:
-                        
+                    print("Bad y direction!")
+                    direction = pickDirection(direction)
+                    print("direction: ",direction)
+                    return moveInDirection(self,curr,direction)
+                    
+            else:
+                print("Bad x direction!")
+                direction = pickDirection(direction)
+                print("direction: ",direction)
+                return moveInDirection(self,curr,direction)
+                
+##            else:
+##                print("Next direction has been visited!")
+##                direction = pickDirection(direction)
+##                print("direction: ",direction)
+##                moveInDirection(self,curr,direction)
+                
+        point = [1,1]
+        prog = False
+
+        while prog == False:
+                print("point: ",point)
+                print("Currently at: ",point)
+                point = moveInDirection(self,point,pickDirection())                       
                 prog = checkDone(self)               
-                print("The maze is done: ", prog)
 
         
         def pickStarts(self):
@@ -194,11 +202,14 @@ class PerfectMaze():
             self.ends[1].isEnd = True
     
     def fresh(self):
+        random.seed()
         for x in range((self.n+2)):
             for y in range(self.n+2):
                     self.maze[x][y] = cell(x,y)
                     self.north[x][y],self.east[x][y],self.south[x][y],self.west[x][y] = True,True,True,True
-                    if x == self.n or y ==self.n:
-                        self.maze[x][y].border = True
+        self.maze[1][1].visited = True
 
- 
+
+A = PerfectMaze(eval(input("Enter maze size: ")))
+A.fresh()
+A.build()
