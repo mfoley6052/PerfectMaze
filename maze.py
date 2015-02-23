@@ -39,7 +39,7 @@ class myStack():
 #A single cell of the nxn grid        
 class cell():
     #Setting up required properties of a cell
-    def __init__(self,x,y,isStart = False,isEnd = False,cType='F',order=15,visited=False,border = False):
+    def __init__(self,x,y,isStart = False,isEnd = False,cType='F',order=15,visited=False):
         self.x = x
         self.y = y
         self.cType = cType
@@ -47,7 +47,6 @@ class cell():
         self.visited = visited
         self.isStart =isStart
         self.isEnd = isEnd
-        self.border = border
         
 #nxn Perfect Maze               
 class PerfectMaze():
@@ -67,7 +66,7 @@ class PerfectMaze():
         for x in range(self.n+2):
             N = []
             for y in range(self.n+2):
-                N.append(((x,y),self.maze[x][y].visited,self.maze[x][y].border))
+                N.append(((x,y),self.maze[x][y].visited))
             M.append(N)
             print (M[x])
     
@@ -79,7 +78,7 @@ class PerfectMaze():
     def build(self):
         
         def checkDone(self):
-            if self.steps[0]+1 == self.n**2:
+            if self.steps[0]+1 == 2*self.n**2:
                 return True
             else:
                 return False
@@ -89,9 +88,9 @@ class PerfectMaze():
             py = p[1]
             print("(x,y): ",(x,y),"  increment: ",(px,py),"  next: ", (x+px,y+py))
             if self.maze[x+px][y+py]  != None:
-                print (self.maze[x+px][y+py].border,self.maze[x+px][y+py].visited)
+                print ("Visited: ",self.maze[x+px][y+py].visited)
                 #if self.maze[x+px][y+py].border == False:# and self.maze[x+px][y+py].visited == False:
-                self.maze[x+px][x+py].visited = True
+                self.maze[x+px][y+py].visited = True
                 self.steps[0] += 1
                 if (px,py) == (0,1):
                     self.north[x][y],self.south[x+px][y+py] = False,False
@@ -208,10 +207,9 @@ class PerfectMaze():
             for y in range(self.n+2):
                     self.maze[x][y] = cell(x,y)
                     self.north[x][y],self.east[x][y],self.south[x][y],self.west[x][y] = True,True,True,True
-                    self.maze[0][y].border = True
-                    self.maze[self.n+1][y].border = True
-            self.maze[x][0].border = True
-            self.maze[x][self.n+1].border = True
         self.maze[1][1].visited = True
 
- 
+
+A = PerfectMaze(eval(input("Enter maze size: ")))
+A.fresh()
+A.build()
