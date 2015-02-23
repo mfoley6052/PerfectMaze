@@ -137,12 +137,14 @@ class PerfectMaze():
                     print("Bad y direction!")
                     direction = pickDirection(direction)
                     print("direction: ",direction)
-                    moveInDirection(self,curr,direction)
+                    return moveInDirection(self,curr,direction)
+                    
             else:
                 print("Bad x direction!")
                 direction = pickDirection(direction)
                 print("direction: ",direction)
-                moveInDirection(self,curr,direction)
+                return moveInDirection(self,curr,direction)
+                
 ##            else:
 ##                print("Next direction has been visited!")
 ##                direction = pickDirection(direction)
