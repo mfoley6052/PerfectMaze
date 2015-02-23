@@ -86,9 +86,9 @@ class PerfectMaze():
         def walk(self,x,y,p): #Thought: Do i need points, or can i just give the next cell?
             px = p[0]
             py = p[1]
-            print("(x,y): ",(x,y),"  increment: ",(px,py),"  next: ", (x+px,y+py))
+            #print("(x,y): ",(x,y),"  increment: ",(px,py),"  next: ", (x+px,y+py))
             if self.maze[x+px][y+py]  != None:
-                print ("Visited: ",self.maze[x+px][y+py].visited)
+#                print ("Visited: ",self.maze[x+px][y+py].visited)
                 #if self.maze[x+px][y+py].border == False:# and self.maze[x+px][y+py].visited == False:
                 self.maze[x+px][y+py].visited = True
                 self.steps[0] += 1
@@ -107,7 +107,7 @@ class PerfectMaze():
             dirs = {0,1,2,3}
             if bad != None:
                     dirs.remove(bad)
-            print("Dir pick: ",pick,"      Available Dirs: ", dirs, "     bad dir:  ",bad)
+#            print("Dir pick: ",pick,"      Available Dirs: ", dirs, "     bad dir:  ",bad)
             while pick not in dirs and dirs != {}:
                 pick = random.randint(0,3)
                 
@@ -121,27 +121,27 @@ class PerfectMaze():
             if direction == -1:
                 self.stuck = True
             nextCell = [curr[0] + choices[direction][0],curr[1] + choices[direction][1]]
-            print("next Cell: ",nextCell)
+#            print("next Cell: ",nextCell)
            # if self.maze[choices[direction][0]][choices[direction][1]].visited == False:
             if nextCell[0] > 0 and nextCell[0] < self.n+1:
-                print("Next x value is good: ",nextCell[0])
+#                print("Next x value is good: ",nextCell[0])
                 if nextCell[1] > 0 and nextCell[1] < self.n+1:
-                    print("Next y value is good: ",nextCell[1])
+#                    print("Next y value is good: ",nextCell[1])
                     walk(self,curr[0],curr[1],[choices[direction][0],choices[direction][1]])
-                    print("direction: ",direction)
+#                    print("direction: ",direction)
                     print("Walking from ", curr , " to ", nextCell)
-                    print("nextCell: ",nextCell)
+#                    print("nextCell: ",nextCell)
                     return nextCell
                 else:
-                    print("Bad y direction!")
+#                    print("Bad y direction!")
                     direction = pickDirection(direction)
-                    print("direction: ",direction)
+#                    print("direction: ",direction)
                     return moveInDirection(self,curr,direction)
                     
             else:
-                print("Bad x direction!")
+#                print("Bad x direction!")
                 direction = pickDirection(direction)
-                print("direction: ",direction)
+#                print("direction: ",direction)
                 return moveInDirection(self,curr,direction)
                 
 ##            else:
@@ -154,8 +154,8 @@ class PerfectMaze():
         prog = False
 
         while prog == False:
-                print("point: ",point)
-                print("Currently at: ",point)
+#                print("point: ",point)
+#                print("Currently at: ",point)
                 point = moveInDirection(self,point,pickDirection())                       
                 prog = checkDone(self)               
 
