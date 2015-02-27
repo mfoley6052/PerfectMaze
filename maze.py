@@ -52,14 +52,13 @@ class cell():
 class PerfectMaze():
 
     def __init__(self,n):
-        self.cells = range(16)
-        self.cellTypes = ['O','T','R','L','B','TL','TR','BL','BR','LR','TB','TLB','TLR','BLR','TRB','F']
         self.north,self.east,self.south,self.west = [[None]*(n+2)]*(n+2), [[None]*(n+2)]*(n+2), [[None]*(n+2)]*(n+2), [[None]*(n+2)]*(n+2)
         self.maze = [[None]*(n+2)]*(n+2)
         self.steps = [0,0]
         self.ends = [None,None]
         self.n = n
         self.stuck = False
+        self.look = [0,0]
 
     def display(self):
         M = []
@@ -86,9 +85,9 @@ class PerfectMaze():
         def walk(self,x,y,p): #Thought: Do i need points, or can i just give the next cell?
             px = p[0]
             py = p[1]
-            #print("(x,y): ",(x,y),"  increment: ",(px,py),"  next: ", (x+px,y+py))
+            print("(x,y): ",(x,y),"  increment: ",(px,py),"  next: ", (x+px,y+py))
             if self.maze[x+px][y+py]  != None:
-#                print ("Visited: ",self.maze[x+px][y+py].visited)
+                print ("Visited: ",self.maze[x+px][y+py].visited)
                 #if self.maze[x+px][y+py].border == False:# and self.maze[x+px][y+py].visited == False:
                 self.maze[x+px][y+py].visited = True
                 self.steps[0] += 1
@@ -106,8 +105,12 @@ class PerfectMaze():
             pick = random.randint(0,3)
             dirs = {0,1,2,3}
             if bad != None:
+                if type(bad) == type([]):
+                    for i in bad:
+                        dirs.remove(i)
+                elif type(bad) == int:
                     dirs.remove(bad)
-#            print("Dir pick: ",pick,"      Available Dirs: ", dirs, "     bad dir:  ",bad)
+            print("Dir pick: ",pick,"      Available Dirs: ", dirs, "     bad dir:  ",bad)
             while pick not in dirs and dirs != {}:
                 pick = random.randint(0,3)
                 
@@ -122,22 +125,34 @@ class PerfectMaze():
                 self.stuck = True
             nextCell = [curr[0] + choices[direction][0],curr[1] + choices[direction][1]]
 #            print("next Cell: ",nextCell)
-           # if self.maze[choices[direction][0]][choices[direction][1]].visited == False:
+            # if self.maze[choices[direction][0]][choices[direction][1]].visited == False:
             if nextCell[0] > 0 and nextCell[0] < self.n+1:
-#                print("Next x value is good: ",nextCell[0])
+    #                print("Next x value is good: ",nextCell[0])
                 if nextCell[1] > 0 and nextCell[1] < self.n+1:
 #                    print("Next y value is good: ",nextCell[1])
                     walk(self,curr[0],curr[1],[choices[direction][0],choices[direction][1]])
-#                    print("direction: ",direction)
+#                       print("direction: ",direction)
                     print("Walking from ", curr , " to ", nextCell)
 #                    print("nextCell: ",nextCell)
+                    self.look[1] = direction
                     return nextCell
                 else:
 #                    print("Bad y direction!")
                     direction = pickDirection(direction)
 #                    print("direction: ",direction)
                     return moveInDirection(self,curr,direction)
-                    
+            elif self.maze[nextCell[0]][nextCell[1]].visited == True:
+                if self.stuck == False:
+                    direction = pickDirection(direction)
+                    return moveInDirection(self,curr,direction)
+                else:
+                    #go back the way it came
+                    self.stuck = False
+                    if self.look[1] < 2:
+                        direction = self.look[1]+2
+                    else:
+                        direction = self.look[1] -2
+
             else:
 #                print("Bad x direction!")
                 direction = pickDirection(direction)
@@ -156,7 +171,9 @@ class PerfectMaze():
         while prog == False:
 #                print("point: ",point)
 #                print("Currently at: ",point)
-                point = moveInDirection(self,point,pickDirection())                       
+                move = pickDirection()
+                self.look[0] = move
+                point = moveInDirection(self,point,move)                       
                 prog = checkDone(self)               
 
         
