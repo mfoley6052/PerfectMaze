@@ -60,6 +60,7 @@ class PerfectMaze():
         self.stuck = False
         self.look = [0,0]
         self.visited = set()
+        self.path = myStack()
         
 
     def display(self):
@@ -97,6 +98,7 @@ class PerfectMaze():
                 #if self.maze[x+px][y+py].border == False:# and self.maze[x+px][y+py].visited == False:
                 self.maze[x+px][y+py].visited = True
                 self.visited.add((x+px,y+py))
+                self.path.push(p)
                 self.steps[0] += 1
                 if (px,py) == (0,1):
                     self.north[x][y],self.south[x+px][y+py] = False,False
@@ -161,10 +163,8 @@ class PerfectMaze():
                 else:
                     #go back the way it came
                     self.stuck = False
-                    if self.look[1] < 2:
-                        direction = self.look[1]+2
-                    else:
-                        direction = self.look[1] -2
+                    last = self.path.pop()
+                    return moveInDirection(self,curr,last)
 
             
                 
