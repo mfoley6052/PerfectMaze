@@ -39,11 +39,9 @@ class myStack():
 #A single cell of the nxn grid        
 class cell():
     #Setting up required properties of a cell
-    def __init__(self,x,y,isStart = False,isEnd = False,cType='F',order=15,visited=False):
+    def __init__(self,x,y,isStart = False,isEnd = False,visited=False):
         self.x = x
         self.y = y
-        self.cType = cType
-        self.order = order
         self.visited = visited
         self.isStart =isStart
         self.isEnd = isEnd
@@ -52,8 +50,6 @@ class cell():
 class PerfectMaze():
 
     def __init__(self,n):
-        self.cells = range(16)
-        self.cellTypes = ['O','T','R','L','B','TL','TR','BL','BR','LR','TB','TLB','TLR','BLR','TRB','F']
         self.north,self.east,self.south,self.west = [[None]*(n+2)]*(n+2), [[None]*(n+2)]*(n+2), [[None]*(n+2)]*(n+2), [[None]*(n+2)]*(n+2)
         self.maze = [[None]*(n+2)]*(n+2)
         self.steps = [0,0]
@@ -83,33 +79,41 @@ class PerfectMaze():
             else:
                 return False
 
-        def walk(self,x,y,p): #Thought: Do i need points, or can i just give the next cell?
-            px = p[0]
-            py = p[1]
+        def walk(self,x,y,p):
             #print("(x,y): ",(x,y),"  increment: ",(px,py),"  next: ", (x+px,y+py))
-            if self.maze[x+px][y+py]  != None:
+            if self.maze[p[0]][p[1]]  != None:
 #                print ("Visited: ",self.maze[x+px][y+py].visited)
-                #if self.maze[x+px][y+py].border == False:# and self.maze[x+px][y+py].visited == False:
-                self.maze[x+px][y+py].visited = True
-                self.steps[0] += 1
-                if (px,py) == (0,1):
-                    self.north[x][y],self.south[x+px][y+py] = False,False
-                elif (px,py) == (1,0):
-                    self.east[x][y],self.west[x+px][y+py] = False,False
-                elif (px,py) == (0,-1):
-                    self.south[x][y],self.north[x+px][y+py] = False,False
-                elif (px,py) == (-1,0):
-                    self.west[x][y],self.east[x+px][y+py] = False,False
-                #else:
+                if self.maze[p[0]][p[1]].visited == False:
+                    self.maze[p[0]][p[1]].visited = True
+                    self.steps[0] += 1
+                    if (p[0]-x,p[1]-y) == (0,1):
+                        self.north[x][y],self.south[p[0]][p[1]] = False,False
+                    elif (p[0]-x,p[1]-y) == (1,0):
+                        self.east[x][y],self.west[p[0]][p[1]] = False,False
+                    elif (p[0]-x,p[1]-y) == (0,-1):
+                        self.south[x][y],self.north[p[0]][p[1]] = False,False
+                    elif (p[0]-x,p[1]-y) == (-1,0):
+                        self.west[x][y],self.east[p[0]][p[1]] = False,False
+                    #else:
 
-        def pickDirection(bad=None):
+        def pickDirection(bad=None,dirs={0,1,2,3}):
             pick = random.randint(0,3)
             dirs = {0,1,2,3}
             if bad != None:
+                if type(bad) == int:
                     dirs.remove(bad)
-#            print("Dir pick: ",pick,"      Available Dirs: ", dirs, "     bad dir:  ",bad)
+                else:
+                    for i in bad:
+                        dirs.remove(i)
+            print("Dir pick: ",pick,"      Available Dirs: ", dirs, "     bad dir:  ",bad)
             while pick not in dirs and dirs != {}:
-                pick = random.randint(0,3)
+                print ("pick: ",pick,"     dirs: ",dirs)
+                if pick in dirs:
+                    dirs.remove(pick)
+                if type(bad) == list:
+                    pick = pickDirection(bad.append(pick),dirs)
+                else:
+                    pick = pickDirection([bad].append(pick),dirs)
                 
             if dirs != {}:
                  return pick
@@ -150,7 +154,7 @@ class PerfectMaze():
 ##                print("direction: ",direction)
 ##                moveInDirection(self,curr,direction)
                 
-        point = [1,1]
+        point = [0,1]
         prog = False
 
         while prog == False:
