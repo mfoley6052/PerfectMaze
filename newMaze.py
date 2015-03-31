@@ -1,5 +1,6 @@
 import random
 import turtle
+import timeit
 class myStack():
 
     def __init__(self,initial = []):
@@ -44,17 +45,29 @@ class Builder():
         i = random.choice(tuple(self.cell.neighbours))
         if maze[self.cell.neighbours[i][0]][self.cell.neighbours[i][1]].visited == False:
             self.cell = maze[self.cell.neighbours[i][0]][self.cell.neighbours[i][1]]
-            self.path.push((self.cell.y,self.cell.x))
             self.position=(self.cell.y,self.cell.x)
+            self.path.push(self.position)
             self.cell.visited = True
             maze[self.position[0]][self.position[1]].visited = True
             print (self.position)
+        else:
+            stuck = True
+            for q in self.cell.neighbours:
+                if maze[self.cell.neighbours[q][0]][self.cell.neighbours[q][1]].visited == False:
+                    stuck = False
+            if stuck:
+                if len(self.path.stack) > 0:
+                    a = self.path.pop()
+                    return (y-(y-a[0]),x-(x-a[1]))
+                    
+                
         return self.position
         
                 
 
     def draw(self):
         self.scr = turtle.Screen()
+        self.turt.reset()
         for p in self.path.stack:
             if p[0] > 0 and p[0] <= self.n and p[1] > 0 and p[1] <= self.n:
                 self.turt.pendown()
@@ -97,9 +110,8 @@ class cell():
                 del(self.neighbours['N'])
             temp = self,neighbours
             for i in {'N','E','W','S'}:
-                if maze[self.neighbours[i][0]][self.neighbours[i][1]].visited == True or self.neighbours[i][0] > self.n or self.neighbours[i][0] < 0 or self.neighbours[i][1] > self.n or self.neighbours[i][1] < 0 :
+                if maze[self.neighbours[i][0]][self.neighbours[i][1]].visited == True:
                     del(self.neighbours[i])
-            print(self.neighbours)
             if self.neighbours == {}:
                 return True
             else:
@@ -128,10 +140,10 @@ x = 1
 isStuck = False
 while working:
     isStuck = maze[y][x].refreshNeighbours()
-    p = Cam.step(y,x)
+    if len(Cam.path.stack) <= n**2+n:
+        p = Cam.step(y,x)
     y = p[0]
     x = p[1]
-    print(isStuck,maze[y][x].neighbours)
     if isStuck:
         working = False
 print (Cam.path.stack)
